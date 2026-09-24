@@ -149,4 +149,13 @@ Skenario pengujian utama:
 
 **Implementasi awal.**
 
-Dokumen kebutuhan, alur sistem, rancangan database, daftar halaman, teknologi, metode pengembangan, dan rencana pengujian telah ditentukan. Implementasi awal sudah menyediakan daftar lapangan, form reservasi, pengecekan bentrok jadwal, penyimpanan SQLite, dan riwayat reservasi. Tahap berikutnya adalah menambahkan login, halaman admin, pembayaran simulasi, dan desain UML.
+Dokumen kebutuhan, alur sistem, rancangan database, daftar halaman, teknologi, metode pengembangan, dan rencana pengujian telah ditentukan. Implementasi awal sudah menyediakan daftar lapangan, form reservasi, pengecekan bentrok jadwal, penyimpanan SQLite, riwayat reservasi, dan login admin.
+
+## Akses Admin
+
+Buka halaman admin melalui `http://localhost:8001/index.php?page=admin`.
+
+- Email: `admin@sportiva.test`
+- Password: `admin123`
+
+Akun admin dibuat otomatis saat aplikasi pertama kali dijalankan. Untuk penggunaan nyata, password bawaan harus diganti.

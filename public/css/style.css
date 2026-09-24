@@ -38,6 +38,15 @@ body {
     text-transform: uppercase;
 }
 
+.navigation a {
+    color: #f7f9ef;
+    text-decoration: none;
+}
+
+.navigation a:hover {
+    color: var(--accent);
+}
+
 .hero-content {
     max-width: 640px;
     margin-top: 86px;
@@ -72,6 +81,55 @@ h1 {
 .container {
     width: min(1120px, 86vw);
     margin: -42px auto 80px;
+}
+
+.admin-page {
+    margin-top: 70px;
+}
+
+.admin-heading {
+    align-items: flex-start;
+}
+
+.admin-heading h1,
+.login-panel h1 {
+    margin-bottom: 20px;
+    font-size: clamp(42px, 6vw, 76px);
+    letter-spacing: -2px;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 13px 16px;
+    color: var(--ink);
+    background: var(--accent);
+    font: 700 12px Arial, sans-serif;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.button-link-dark {
+    color: #fff;
+    background: var(--ink);
+}
+
+.login-panel {
+    align-items: start;
+}
+
+.login-panel > .message {
+    grid-column: 2;
+    margin: 0;
+}
+
+.login-panel > .booking-form {
+    grid-column: 2;
 }
 
 .section-heading {
@@ -289,6 +347,20 @@ th {
     .section-heading {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .admin-actions {
+        width: 100%;
+    }
+
+    .button-link {
+        flex: 1;
+        text-align: center;
+    }
+
+    .login-panel > .message,
+    .login-panel > .booking-form {
+        grid-column: 1;
     }
 
     h2 {
