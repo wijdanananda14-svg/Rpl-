@@ -319,6 +319,24 @@ th {
     font-size: 12px;
 }
 
+.status-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 240px;
+}
+
+.status-form select {
+    min-width: 150px;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.status-form button {
+    padding: 9px 11px;
+    font-size: 11px;
+}
+
 @media (max-width: 760px) {
     .navigation {
         align-items: flex-start;

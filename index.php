@@ -96,6 +96,22 @@ if (($action === 'login') && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $messageType = 'error';
 }
 
+if ($action === 'update_status' && isset($_SESSION['admin']) && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    $bookingId = filter_input(INPUT_POST, 'booking_id', FILTER_VALIDATE_INT);
+    $status = (string) ($_POST['status'] ?? '');
+    $allowedStatuses = ['Menunggu pembayaran', 'Dikonfirmasi', 'Dibatalkan'];
+
+    if ($bookingId && in_array($status, $allowedStatuses, true)) {
+        $updateStatus = $database->prepare('UPDATE bookings SET status = :status WHERE id = :id');
+        $updateStatus->bindValue(':status', $status, SQLITE3_TEXT);
+        $updateStatus->bindValue(':id', $bookingId, SQLITE3_INTEGER);
+        $updateStatus->execute();
+    }
+
+    header('Location: index.php?page=admin&updated=1');
+    exit;
+}
+
 if ($action !== 'login' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $fieldId = filter_input(INPUT_POST, 'field_id', FILTER_VALIDATE_INT);
     $customerName = trim((string) ($_POST['customer_name'] ?? ''));
@@ -176,8 +192,9 @@ function escape(string $value): string { return htmlspecialchars($value, ENT_QUO
             </section>
             <section class="history">
                 <div class="section-heading"><div><p class="eyebrow">DATA MASUK</p><h2>Semua reservasi</h2></div></div>
-                <div class="table-wrap"><table><thead><tr><th>Pemesan</th><th>Email</th><th>Lapangan</th><th>Jadwal</th><th>Status</th></tr></thead><tbody>
-                    <?php while ($booking = $adminBookings->fetchArray(SQLITE3_ASSOC)): ?><tr><td><?= escape($booking['customer_name']) ?></td><td><?= escape($booking['customer_email']) ?></td><td><?= escape($booking['field_name']) ?></td><td><?= escape($booking['booking_date']) ?>, <?= escape($booking['start_time']) ?> - <?= escape($booking['end_time']) ?></td><td><span class="status"><?= escape($booking['status']) ?></span></td></tr><?php endwhile; ?>
+                <?php if (isset($_GET['updated'])): ?><div class="message">Status reservasi berhasil diperbarui.</div><?php endif; ?>
+                <div class="table-wrap"><table><thead><tr><th>Pemesan</th><th>Email</th><th>Lapangan</th><th>Jadwal</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                    <?php while ($booking = $adminBookings->fetchArray(SQLITE3_ASSOC)): ?><tr><td><?= escape($booking['customer_name']) ?></td><td><?= escape($booking['customer_email']) ?></td><td><?= escape($booking['field_name']) ?></td><td><?= escape($booking['booking_date']) ?>, <?= escape($booking['start_time']) ?> - <?= escape($booking['end_time']) ?></td><td><span class="status"><?= escape($booking['status']) ?></span></td><td><form class="status-form" method="post" action="index.php?page=admin&amp;action=update_status"><input type="hidden" name="booking_id" value="<?= (int) $booking['id'] ?>"><select name="status"><option <?= $booking['status'] === 'Menunggu pembayaran' ? 'selected' : '' ?>>Menunggu pembayaran</option><option <?= $booking['status'] === 'Dikonfirmasi' ? 'selected' : '' ?>>Dikonfirmasi</option><option <?= $booking['status'] === 'Dibatalkan' ? 'selected' : '' ?>>Dibatalkan</option></select><button type="submit">Simpan</button></form></td></tr><?php endwhile; ?>
                 </tbody></table></div>
             </section>
         <?php else: ?>
