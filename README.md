@@ -186,6 +186,8 @@ Pemeriksaan lokal: server PHP berhasil dijalankan, halaman utama merespons HTTP 
 ```bash
 php tests/booking_validation.php
 php tests/booking_workflow.php
+php tests/admin_booking_status.php
+git log -2 --oneline
 ```
 
 ### MVP Pertemuan 5: Booking Lapangan
@@ -195,6 +197,20 @@ php tests/booking_workflow.php
 - **Build:** `BookingController` memvalidasi data form, `Booking` memeriksa lapangan dan bentrok serta menyimpan booking, dan `index.php` menyajikan pesan hasilnya.
 - **Verify:** `tests/booking_validation.php` menguji masukan valid/tidak valid dan `tests/booking_workflow.php` menguji penyimpanan SQLite, bentrok, lapangan nonaktif, slot berdampingan, dan pembatalan.
 - **Demo:** jalankan aplikasi, pilih lapangan dan jadwal valid untuk melihat booking masuk ke riwayat; coba kirim waktu tumpang tindih untuk melihat pesan penolakan.
+
+### MVP Pertemuan 5: Status Booking Admin
+
+- **Brief:** admin yang sudah login dapat mengubah status reservasi melalui dashboard; status di luar pilihan atau ID yang tidak ditemukan tidak boleh mengubah data.
+- **Acceptance criteria:** tiga status yang didukung (`Menunggu pembayaran`, `Dikonfirmasi`, `Dibatalkan`) tersimpan; status tidak dikenal, ID tidak valid, dan booking yang tidak ada ditolak serta menampilkan pesan gagal; pengguna yang belum login tidak dapat menjalankan aksi update.
+- **Build:** `Booking::updateStatus` memvalidasi status dan keberadaan booking sebelum menyimpan, sedangkan form dashboard menggunakan daftar status yang sama dan aksi terlindungi oleh sesi admin.
+- **Verify:** `tests/admin_booking_status.php` memakai SQLite in-memory untuk mengecek tiap status, status tidak dikenal, ID invalid, dan booking tidak ditemukan. Periksa juga halaman admin melalui browser.
+- **Demo:** login menggunakan akun admin, pilih status berbeda pada booking dan tekan **Simpan**; untuk mendemonstrasikan validasi, kirim nilai status yang tidak tersedia atau ID booking yang tidak ada dan amati pesan gagal.
+
+### Review untuk Presentasi
+
+- **Yang dibantu AI Agent:** memisahkan validasi dan operasi booking ke controller/model, menambahkan tes acceptance SQLite, memakai satu daftar status yang sama untuk penyimpanan dan form admin, serta menjalankan tes dan smoke test HTTP.
+- **Yang wajib direview mahasiswa:** periksa perubahan dengan `git show --stat` dan baca implementasi serta tes; jelaskan mengapa tanggal lampau, lapangan nonaktif, slot bentrok, dan status tak dikenal ditolak. Mahasiswa harus jujur menyebutkan perubahan lanjutan yang benar-benar ia lakukan sendiri—jangan mengklaim mengubah kode jika tidak melakukannya.
+- **Bukti proses:** dua commit terpisah dapat dilihat dengan `git log -2 --oneline`; ketiga perintah tes di atas harus lulus.
 
 Draft scaffold atau diagram yang dibuat dengan bantuan AI tetap perlu dipahami dan diverifikasi oleh mahasiswa. Sebelum menjelaskan aplikasi, pahami tanggung jawab setiap komponen di atas serta data yang diterima, divalidasi, disimpan, dan ditampilkan kembali.
 

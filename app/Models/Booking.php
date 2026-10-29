@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 final class Booking
 {
+    public const STATUSES = ['Menunggu pembayaran', 'Dikonfirmasi', 'Dibatalkan'];
+
     public function __construct(private readonly SQLite3 $database)
     {
     }
@@ -57,5 +59,28 @@ final class Booking
         }
 
         return 'created';
+    }
+
+    public function updateStatus(int $bookingId, string $status): bool
+    {
+        if ($bookingId < 1 || !in_array($status, self::STATUSES, true)) {
+            return false;
+        }
+
+        $exists = $this->database->prepare('SELECT 1 FROM bookings WHERE id = :id');
+        $exists->bindValue(':id', $bookingId, SQLITE3_INTEGER);
+        if ($exists->execute()->fetchArray() === false) {
+            return false;
+        }
+
+        $statement = $this->database->prepare('UPDATE bookings SET status = :status WHERE id = :id');
+        $statement->bindValue(':status', $status, SQLITE3_TEXT);
+        $statement->bindValue(':id', $bookingId, SQLITE3_INTEGER);
+
+        if ($statement->execute() === false) {
+            throw new RuntimeException('Status booking gagal diperbarui.');
+        }
+
+        return true;
     }
 }
