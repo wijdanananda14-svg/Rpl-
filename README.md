@@ -193,24 +193,26 @@ git log -2 --oneline
 ### MVP Pertemuan 5: Booking Lapangan
 
 - **Brief:** pelanggan dapat memesan slot lapangan yang aktif, tanpa jadwal lampau, input waktu tidak valid, atau booking yang bentrok.
+- **Plan:** validasi input booking di controller; letakkan pemeriksaan lapangan aktif, bentrok, dan penyimpanan di model; uji kasus valid, invalid, overlap, slot berdampingan, dan pembatalan memakai SQLite in-memory agar tes tidak mengubah database aplikasi.
 - **Acceptance criteria:** data booking valid tersimpan; tanggal lampau, tanggal kalender yang tidak ada, email/waktu tidak valid ditolak; lapangan nonaktif dan waktu tumpang tindih ditolak; booking yang dibatalkan tidak lagi mengunci slot.
 - **Build:** `BookingController` memvalidasi data form, `Booking` memeriksa lapangan dan bentrok serta menyimpan booking, dan `index.php` menyajikan pesan hasilnya.
 - **Verify:** `tests/booking_validation.php` menguji masukan valid/tidak valid dan `tests/booking_workflow.php` menguji penyimpanan SQLite, bentrok, lapangan nonaktif, slot berdampingan, dan pembatalan.
-- **Demo:** jalankan aplikasi, pilih lapangan dan jadwal valid untuk melihat booking masuk ke riwayat; coba kirim waktu tumpang tindih untuk melihat pesan penolakan.
+- **Demo:** buka `http://127.0.0.1:8001/`, pesan slot valid untuk melihat booking masuk ke riwayat, kemudian coba slot yang bentrok untuk melihat pesan penolakan. Gunakan tanggal mendatang dan data uji; booking demo disimpan di database lokal.
 
 ### MVP Pertemuan 5: Status Booking Admin
 
 - **Brief:** admin yang sudah login dapat mengubah status reservasi melalui dashboard; status di luar pilihan atau ID yang tidak ditemukan tidak boleh mengubah data.
+- **Plan:** gunakan daftar status terpusat di model untuk validasi dan pilihan form; wajibkan sesi admin sebelum menerima update; uji semua status, ID/status tidak valid, dan akses tanpa login.
 - **Acceptance criteria:** tiga status yang didukung (`Menunggu pembayaran`, `Dikonfirmasi`, `Dibatalkan`) tersimpan; status tidak dikenal, ID tidak valid, dan booking yang tidak ada ditolak serta menampilkan pesan gagal; pengguna yang belum login tidak dapat menjalankan aksi update.
 - **Build:** `Booking::updateStatus` memvalidasi status dan keberadaan booking sebelum menyimpan, sedangkan form dashboard menggunakan daftar status yang sama dan aksi terlindungi oleh sesi admin.
 - **Verify:** `tests/admin_booking_status.php` memakai SQLite in-memory untuk mengecek tiap status, status tidak dikenal, ID invalid, dan booking tidak ditemukan. Periksa juga halaman admin melalui browser.
-- **Demo:** login menggunakan akun admin, pilih status berbeda pada booking dan tekan **Simpan**; untuk mendemonstrasikan validasi, kirim nilai status yang tidak tersedia atau ID booking yang tidak ada dan amati pesan gagal.
+- **Demo:** buka `http://127.0.0.1:8001/index.php?page=admin`, login dengan akun demo di bagian Akses Admin, lalu ubah status booking dan tekan **Simpan**. Aksi tanpa sesi admin mengarahkan kembali ke login.
 
 ### Review untuk Presentasi
 
 - **Yang dibantu AI Agent:** memisahkan validasi dan operasi booking ke controller/model, menambahkan tes acceptance SQLite, memakai satu daftar status yang sama untuk penyimpanan dan form admin, serta menjalankan tes dan smoke test HTTP.
 - **Yang wajib direview mahasiswa:** periksa perubahan dengan `git show --stat` dan baca implementasi serta tes; jelaskan mengapa tanggal lampau, lapangan nonaktif, slot bentrok, dan status tak dikenal ditolak. Mahasiswa harus jujur menyebutkan perubahan lanjutan yang benar-benar ia lakukan sendiri—jangan mengklaim mengubah kode jika tidak melakukannya.
-- **Bukti proses:** dua commit terpisah dapat dilihat dengan `git log -2 --oneline`; ketiga perintah tes di atas harus lulus.
+- **Bukti proses:** dua commit fitur terpisah dapat dilihat dengan `git log -2 --oneline`; ketiga perintah tes di atas harus lulus. Demo dijalankan langsung di browser; dokumentasi ini bukan rekaman video.
 
 Draft scaffold atau diagram yang dibuat dengan bantuan AI tetap perlu dipahami dan diverifikasi oleh mahasiswa. Sebelum menjelaskan aplikasi, pahami tanggung jawab setiap komponen di atas serta data yang diterima, divalidasi, disimpan, dan ditampilkan kembali.
 
