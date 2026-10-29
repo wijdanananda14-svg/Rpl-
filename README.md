@@ -147,7 +147,7 @@ Skenario pengujian utama:
 
 ## Status Project
 
-**Implementasi awal.**
+**MVP siap didemonstrasikan secara lokal.**
 
 Dokumen kebutuhan, alur sistem, rancangan database, daftar halaman, teknologi, metode pengembangan, dan rencana pengujian telah ditentukan. Implementasi awal sudah menyediakan daftar lapangan, form reservasi, pengecekan bentrok jadwal, penyimpanan SQLite, riwayat reservasi, dan login admin.
 
@@ -215,6 +215,16 @@ git log -2 --oneline
 - **Bukti proses:** dua commit fitur terpisah dapat dilihat dengan `git log -2 --oneline`; ketiga perintah tes di atas harus lulus. Demo dijalankan langsung di browser; dokumentasi ini bukan rekaman video.
 
 Draft scaffold atau diagram yang dibuat dengan bantuan AI tetap perlu dipahami dan diverifikasi oleh mahasiswa. Sebelum menjelaskan aplikasi, pahami tanggung jawab setiap komponen di atas serta data yang diterima, divalidasi, disimpan, dan ditampilkan kembali.
+
+## P7: Menuntaskan MVP
+
+Fitur inti yang sekarang terhubung mencakup registrasi/login pelanggan dan admin, daftar serta pengelolaan lapangan, jadwal admin dan batas waktu booking, validasi/pencegahan bentrok, dashboard dan riwayat milik pengguna, pembayaran simulasi, pembatalan booking yang belum dibayar, pengubahan status oleh admin, serta ringkasan laporan.
+
+- Cara instalasi, demo, dan menjalankan tes: [HowToRun.md](./HowToRun.md)
+- Checklist acceptance criteria dan hasil tes: [checklist_mvp.md](./checklist_mvp.md)
+- Database lama dimigrasikan secara aditif ketika aplikasi pertama kali dibuka; untuk demo gunakan database sementara bila ingin memisahkan data.
+- Pembayaran hanya simulasi lokal; tidak ada gateway atau transaksi uang sungguhan.
+- `demo.mp4` tidak dibuat otomatis. Rekam dan tambahkan video demo nyata sebelum pengumpulan.
 
 ## Akses Admin
 

@@ -43,6 +43,11 @@ body {
     text-decoration: none;
 }
 
+.navigation a,
+.navigation span {
+    font-size: 11px;
+}
+
 .navigation a:hover {
     color: var(--accent);
 }
@@ -101,6 +106,42 @@ h1 {
 .admin-actions {
     display: flex;
     gap: 10px;
+}
+
+.admin-editor {
+    align-items: start;
+    margin-top: 70px;
+}
+
+.admin-editor .booking-form {
+    margin-bottom: 24px;
+}
+
+.field-admin-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 12px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+}
+
+.field-admin-row > form:last-child button,
+.button-secondary {
+    color: #fff;
+    background: var(--ink);
+}
+
+.report-grid {
+    margin-top: 36px;
+}
+
+.report-grid .field-card {
+    min-height: 120px;
+}
+
+.report-grid .price {
+    margin-top: 12px;
 }
 
 .button-link {
@@ -273,6 +314,11 @@ button:hover {
     background: #c6ec38;
 }
 
+button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
 .message {
     margin-top: 24px;
     padding: 15px 18px;
@@ -369,6 +415,10 @@ th {
 
     .admin-actions {
         width: 100%;
+    }
+
+    .field-admin-row {
+        grid-template-columns: 1fr;
     }
 
     .button-link {
