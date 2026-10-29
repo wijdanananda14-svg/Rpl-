@@ -36,6 +36,9 @@ final class BookingController
         $timeIsValid = preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $start) === 1
             && preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $end) === 1
             && $start < $end;
+        if ($dateIsValid && $date === date('Y-m-d') && $start <= date('H:i')) {
+            $timeIsValid = false;
+        }
 
         if (!$dateIsValid || !$timeIsValid) {
             return ['valid' => false, 'message' => 'Tanggal dan waktu booking tidak valid.'];

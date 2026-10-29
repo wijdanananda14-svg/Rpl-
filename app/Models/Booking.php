@@ -44,8 +44,8 @@ final class Booking
         }
 
         $statement = $this->database->prepare(<<<SQL
-            INSERT INTO bookings (field_id, customer_name, customer_email, booking_date, start_time, end_time)
-            VALUES (:field_id, :customer_name, :customer_email, :booking_date, :start_time, :end_time)
+            INSERT INTO bookings (field_id, customer_name, customer_email, booking_date, start_time, end_time, status)
+            VALUES (:field_id, :customer_name, :customer_email, :booking_date, :start_time, :end_time, :status)
         SQL);
         $statement->bindValue(':field_id', $fieldId, SQLITE3_INTEGER);
         $statement->bindValue(':customer_name', $customerName, SQLITE3_TEXT);
@@ -53,6 +53,7 @@ final class Booking
         $statement->bindValue(':booking_date', $date, SQLITE3_TEXT);
         $statement->bindValue(':start_time', $start, SQLITE3_TEXT);
         $statement->bindValue(':end_time', $end, SQLITE3_TEXT);
+        $statement->bindValue(':status', 'Menunggu pembayaran', SQLITE3_TEXT);
 
         if ($statement->execute() === false) {
             throw new RuntimeException('Booking gagal disimpan ke database.');

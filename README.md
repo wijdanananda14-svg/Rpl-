@@ -224,3 +224,32 @@ Buka halaman admin melalui `http://localhost:8001/index.php?page=admin`.
 - Password: `admin123`
 
 Akun admin dibuat otomatis saat aplikasi pertama kali dijalankan. Untuk penggunaan nyata, password bawaan harus diganti.
+
+## P6: Penyempurnaan MVP Reservasi Lapangan
+
+### MVP
+
+MVP yang disempurnakan adalah reservasi lapangan olahraga: pelanggan membuat booking pada lapangan yang aktif dan admin mengelola statusnya.
+
+### User Stories dan Acceptance Criteria
+
+1. **Data pelanggan:** sebagai pelanggan, saya ingin mengirim nama dan email untuk reservasi. **AC:** nama kosong atau email salah ditolak; nama dan email yang valid diterima bersama data booking lainnya.
+2. **Jadwal mendatang:** sebagai pelanggan, saya ingin memilih tanggal dan waktu bermain yang belum lewat. **AC:** tanggal kalender tidak valid, tanggal lampau, waktu dengan format salah, jam selesai yang tidak setelah jam mulai, dan waktu mulai hari ini yang sudah lewat/tepat saat ini ditolak.
+3. **Lapangan aktif:** sebagai pelanggan, saya ingin memilih lapangan yang tersedia. **AC:** booking pada lapangan aktif tersimpan dengan status awal `Menunggu pembayaran`; ID lapangan yang tidak ada atau lapangan nonaktif ditolak tanpa menyimpan booking.
+4. **Ketersediaan slot:** sebagai pelanggan, saya ingin sistem mencegah jadwal bentrok. **AC:** booking dengan waktu yang beririsan pada lapangan dan tanggal yang sama ditolak; slot berdampingan, tanggal/lapangan berbeda, serta slot yang booking sebelumnya dibatalkan tetap dapat dipesan.
+5. **Status reservasi:** sebagai admin, saya ingin memperbarui status booking. **AC:** status `Menunggu pembayaran`, `Dikonfirmasi`, atau `Dibatalkan` disimpan; status di luar daftar dan ID booking yang tidak ada ditolak tanpa mengubah status tersimpan.
+
+### Implementasi dan Verifikasi P6
+
+Perubahan produksi P6 memperketat aturan waktu untuk booking hari ini dan menetapkan status awal secara eksplisit saat menyimpan booking. Tes P6 ada dalam lima file terpisah: `tests/p6_customer_details.php`, `tests/p6_schedule_rules.php`, `tests/p6_booking_creation.php`, `tests/p6_slot_availability.php`, dan `tests/p6_admin_status.php`.
+
+Jalankan semua file tes PHP, termasuk tes sebelumnya, dari direktori proyek:
+
+```bash
+for test in tests/*.php; do
+    printf '\n== %s ==\n' "$test"
+    php "$test" || exit 1
+done
+```
+
+Setiap file mencetak hasilnya dan keluar dengan kode bukan nol bila ada assertion gagal. Aplikasi dapat dijalankan menggunakan perintah PHP built-in server pada bagian sebelumnya; buka halaman utama dan admin untuk demo.
