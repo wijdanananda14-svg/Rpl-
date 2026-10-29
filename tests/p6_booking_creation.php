@@ -7,8 +7,17 @@ require_once __DIR__ . '/../app/Models/Booking.php';
 $database = new SQLite3(':memory:');
 $database->exec(<<<SQL
 CREATE TABLE fields (id INTEGER PRIMARY KEY, is_active INTEGER NOT NULL);
+CREATE TABLE schedules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    field_id INTEGER NOT NULL,
+    schedule_date TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Tersedia'
+);
 CREATE TABLE bookings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     field_id INTEGER NOT NULL,
     customer_name TEXT NOT NULL,
     customer_email TEXT NOT NULL,
