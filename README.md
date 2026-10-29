@@ -151,6 +151,53 @@ Skenario pengujian utama:
 
 Dokumen kebutuhan, alur sistem, rancangan database, daftar halaman, teknologi, metode pengembangan, dan rencana pengujian telah ditentukan. Implementasi awal sudah menyediakan daftar lapangan, form reservasi, pengecekan bentrok jadwal, penyimpanan SQLite, riwayat reservasi, dan login admin.
 
+## Menjalankan dan Memverifikasi Aplikasi
+
+### Persyaratan
+
+- PHP CLI dengan ekstensi `sqlite3` dan `session`.
+- Browser web.
+
+### Menjalankan
+
+Dari direktori utama proyek, jalankan:
+
+```bash
+php -S 127.0.0.1:8001 -t .
+```
+
+Buka `http://127.0.0.1:8001/` untuk halaman utama atau `http://127.0.0.1:8001/index.php?page=admin` untuk login admin. Hentikan server dengan `Ctrl+C`.
+
+Saat aplikasi pertama kali dibuka, `index.php` menyiapkan tabel SQLite yang diperlukan dan membuat data awal lapangan serta akun admin jika belum tersedia. Database aplikasi tersimpan di `storage/reservasi.sqlite`.
+
+### Struktur Komponen dan Aliran Data
+
+- `index.php` adalah entry point yang saat ini menangani permintaan halaman utama dan admin, membaca form, memvalidasi booking, memeriksa bentrok jadwal, berinteraksi dengan SQLite, dan merender HTML.
+- `storage/reservasi.sqlite` menyimpan data lapangan, akun admin, dan booking.
+- `public/css/style.css` mengatur tampilan, sedangkan `public/js/app.js` menyediakan interaksi sisi browser.
+- `app/Controllers`, `app/Models`, `app/Views`, `app/Config`, dan `routes/web.php` berisi scaffold MVC. Beberapa bagiannya belum menjadi jalur eksekusi halaman utama; misalnya `index.php` saat ini membuat koneksi SQLite secara langsung dan belum memakai `app/Config/Database.php`.
+- Aliran booking: browser mengirim form ke `index.php` → server memeriksa kelengkapan data, format email/tanggal/waktu, dan ketersediaan jadwal → booking yang valid disimpan ke SQLite → daftar riwayat membaca data booking dan menampilkannya kembali sebagai HTML.
+- Aliran admin: admin mengirim email dan password → server mencocokkan akun dan memverifikasi hash password di SQLite → sesi admin dibuat → dashboard menampilkan booking dan menyediakan pembaruan status.
+
+### Hasil Pemeriksaan
+
+Pemeriksaan lokal: server PHP berhasil dijalankan, halaman utama merespons HTTP 200 dan memuat UI “Main lebih terencana” serta “Lapangan tersedia”. Tes booking dan validasi dapat dijalankan dengan:
+
+```bash
+php tests/booking_validation.php
+php tests/booking_workflow.php
+```
+
+### MVP Pertemuan 5: Booking Lapangan
+
+- **Brief:** pelanggan dapat memesan slot lapangan yang aktif, tanpa jadwal lampau, input waktu tidak valid, atau booking yang bentrok.
+- **Acceptance criteria:** data booking valid tersimpan; tanggal lampau, tanggal kalender yang tidak ada, email/waktu tidak valid ditolak; lapangan nonaktif dan waktu tumpang tindih ditolak; booking yang dibatalkan tidak lagi mengunci slot.
+- **Build:** `BookingController` memvalidasi data form, `Booking` memeriksa lapangan dan bentrok serta menyimpan booking, dan `index.php` menyajikan pesan hasilnya.
+- **Verify:** `tests/booking_validation.php` menguji masukan valid/tidak valid dan `tests/booking_workflow.php` menguji penyimpanan SQLite, bentrok, lapangan nonaktif, slot berdampingan, dan pembatalan.
+- **Demo:** jalankan aplikasi, pilih lapangan dan jadwal valid untuk melihat booking masuk ke riwayat; coba kirim waktu tumpang tindih untuk melihat pesan penolakan.
+
+Draft scaffold atau diagram yang dibuat dengan bantuan AI tetap perlu dipahami dan diverifikasi oleh mahasiswa. Sebelum menjelaskan aplikasi, pahami tanggung jawab setiap komponen di atas serta data yang diterima, divalidasi, disimpan, dan ditampilkan kembali.
+
 ## Akses Admin
 
 Buka halaman admin melalui `http://localhost:8001/index.php?page=admin`.

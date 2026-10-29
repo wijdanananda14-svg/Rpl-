@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/app/Controllers/BookingController.php';
+require_once __DIR__ . '/app/Models/Booking.php';
+
 session_start();
 
 $databasePath = __DIR__ . '/storage/reservasi.sqlite';
@@ -36,6 +39,8 @@ CREATE TABLE IF NOT EXISTS bookings (
     FOREIGN KEY (field_id) REFERENCES fields(id)
 );
 SQL);
+$bookingController = new BookingController();
+$bookingModel = new Booking($database);
 
 $adminExists = (int) $database->querySingle("SELECT COUNT(*) FROM users WHERE role = 'admin'");
 if ($adminExists === 0) {
@@ -113,44 +118,28 @@ if ($action === 'update_status' && isset($_SESSION['admin']) && ($_SERVER['REQUE
 }
 
 if ($action !== 'login' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    $fieldId = filter_input(INPUT_POST, 'field_id', FILTER_VALIDATE_INT);
-    $customerName = trim((string) ($_POST['customer_name'] ?? ''));
-    $customerEmail = trim((string) ($_POST['customer_email'] ?? ''));
-    $bookingDate = (string) ($_POST['booking_date'] ?? '');
-    $startTime = (string) ($_POST['start_time'] ?? '');
-    $endTime = (string) ($_POST['end_time'] ?? '');
-    $dateIsValid = DateTime::createFromFormat('Y-m-d', $bookingDate) !== false;
-    $timeIsValid = $startTime !== '' && $endTime !== '' && $startTime < $endTime;
+    $validation = $bookingController->validate($_POST);
 
-    if (!$fieldId || $customerName === '' || !filter_var($customerEmail, FILTER_VALIDATE_EMAIL) || !$dateIsValid || !$timeIsValid) {
-        $message = 'Lengkapi data booking dengan benar.';
+    if (!$validation['valid']) {
+        $message = $validation['message'];
         $messageType = 'error';
     } else {
-        $availability = $database->prepare(<<<SQL
-            SELECT COUNT(*) FROM bookings
-            WHERE field_id = :field_id AND booking_date = :booking_date
-              AND status != 'Dibatalkan' AND start_time < :end_time AND end_time > :start_time
-        SQL);
-        $availability->bindValue(':field_id', $fieldId, SQLITE3_INTEGER);
-        $availability->bindValue(':booking_date', $bookingDate, SQLITE3_TEXT);
-        $availability->bindValue(':start_time', $startTime, SQLITE3_TEXT);
-        $availability->bindValue(':end_time', $endTime, SQLITE3_TEXT);
+        $result = $bookingModel->create(
+            (int) $_POST['field_id'],
+            trim((string) $_POST['customer_name']),
+            trim((string) $_POST['customer_email']),
+            (string) $_POST['booking_date'],
+            (string) $_POST['start_time'],
+            (string) $_POST['end_time']
+        );
 
-        if ((int) $availability->execute()->fetchArray()[0] > 0) {
+        if ($result === 'field_unavailable') {
+            $message = 'Lapangan yang dipilih tidak tersedia.';
+            $messageType = 'error';
+        } elseif ($result === 'time_unavailable') {
             $message = 'Jadwal tersebut sudah dipesan. Silakan pilih waktu lain.';
             $messageType = 'error';
         } else {
-            $booking = $database->prepare(<<<SQL
-                INSERT INTO bookings (field_id, customer_name, customer_email, booking_date, start_time, end_time)
-                VALUES (:field_id, :customer_name, :customer_email, :booking_date, :start_time, :end_time)
-            SQL);
-            $booking->bindValue(':field_id', $fieldId, SQLITE3_INTEGER);
-            $booking->bindValue(':customer_name', $customerName, SQLITE3_TEXT);
-            $booking->bindValue(':customer_email', $customerEmail, SQLITE3_TEXT);
-            $booking->bindValue(':booking_date', $bookingDate, SQLITE3_TEXT);
-            $booking->bindValue(':start_time', $startTime, SQLITE3_TEXT);
-            $booking->bindValue(':end_time', $endTime, SQLITE3_TEXT);
-            $booking->execute();
             $message = 'Booking berhasil dibuat dengan status menunggu pembayaran.';
         }
     }
