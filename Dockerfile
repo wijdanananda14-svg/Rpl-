@@ -1,8 +1,8 @@
 FROM php:8.2-apache
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libsqlite3-dev libmariadb-dev \
-    && docker-php-ext-install pdo_sqlite pdo_mysql sqlite3 \
+    && apt-get install -y --no-install-recommends libmariadb-dev \
+    && docker-php-ext-install pdo_mysql \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
