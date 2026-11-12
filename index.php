@@ -20,11 +20,22 @@ $fieldModel = new Field($database);
 $paymentModel = new Payment($database);
 $scheduleModel = new Schedule($database);
 
+$isProduction = getenv('APP_ENV') === 'production';
+$adminEmail = getenv('SPORTIVA_ADMIN_EMAIL') ?: ($isProduction ? '' : 'admin@sportiva.test');
+$adminPassword = getenv('SPORTIVA_ADMIN_PASSWORD') ?: ($isProduction ? '' : 'admin123');
+
 if ((int) $database->querySingle("SELECT COUNT(*) FROM users WHERE role = 'admin'") === 0) {
+    if ($adminEmail === '' || $adminPassword === '') {
+        throw new RuntimeException('Set SPORTIVA_ADMIN_EMAIL and SPORTIVA_ADMIN_PASSWORD before first production startup.');
+    }
+    if (!filter_var($adminEmail, FILTER_VALIDATE_EMAIL) || ($isProduction && strlen($adminPassword) < 12)) {
+        throw new RuntimeException('Production admin credentials must use a valid email and a password of at least 12 characters.');
+    }
+
     $statement = $database->prepare('INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)');
     $statement->bindValue(':name', 'Administrator Sportiva', SQLITE3_TEXT);
-    $statement->bindValue(':email', 'admin@sportiva.test', SQLITE3_TEXT);
-    $statement->bindValue(':password', password_hash('admin123', PASSWORD_DEFAULT), SQLITE3_TEXT);
+    $statement->bindValue(':email', $adminEmail, SQLITE3_TEXT);
+    $statement->bindValue(':password', password_hash($adminPassword, PASSWORD_DEFAULT), SQLITE3_TEXT);
     $statement->bindValue(':role', 'admin', SQLITE3_TEXT);
     $statement->execute();
 }

@@ -1,0 +1,11 @@
+Options -Indexes
+
+<FilesMatch "(?i)\.(sqlite|sqlite3|db|env)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(app|database|docs|routes|storage|tests|\.git)(/|$) - [F,L,NC]
+    RewriteRule (^|/)\. - [F,L]
+</IfModule>

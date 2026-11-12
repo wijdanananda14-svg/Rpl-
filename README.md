@@ -147,7 +147,7 @@ Skenario pengujian utama:
 
 ## Status Project
 
-**MVP siap didemonstrasikan secara lokal.**
+**MVP siap didemonstrasikan secara lokal.** Panduan deployment ke VPS atau Raspberry Pi/Orange Pi tersedia di [docs/deployment.md](docs/deployment.md); deployment publik tetap memerlukan server dan konfigurasi HTTPS milik pengelola.
 
 Dokumen kebutuhan, alur sistem, rancangan database, daftar halaman, teknologi, metode pengembangan, dan rencana pengujian telah ditentukan. Implementasi awal sudah menyediakan daftar lapangan, form reservasi, pengecekan bentrok jadwal, penyimpanan SQLite, riwayat reservasi, dan login admin.
 
