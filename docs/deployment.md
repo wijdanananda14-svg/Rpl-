@@ -1,21 +1,22 @@
 # Deployment Sportiva
 
-Aplikasi PHP + SQLite ini dapat dicoba dengan runtime PHP Vercel, atau dipasang di VPS/Raspberry Pi/Orange Pi berbasis Debian. Deploy Vercel menghasilkan domain `*.vercel.app`; VPS/Pi dengan konfigurasi jaringan publik dapat memakai URL `https://IP/nama_aplikasi`.
+Aplikasi PHP + SQLite ini dapat di-deploy ke Render menggunakan Docker, atau dipasang di VPS/Raspberry Pi/Orange Pi berbasis Debian.
 
-## Demo PHP di Vercel
+## Deploy ke Render dengan Docker
 
-Repository mengarahkan request ke `api/index.php` memakai community runtime `vercel-php@0.9.0` dalam [vercel.json](../vercel.json). Route filesystem mempertahankan asset di `public/`; source code, database, dan test diblokir dari akses HTTP. Runtime komunitas ini bukan runtime PHP resmi Vercel dan dukungannya dapat berubah.
+Repository menyediakan `Dockerfile` berbasis FrankenPHP, `Caddyfile`, dan `.dockerignore`. Render membuat URL publik `*.onrender.com`.
 
-1. Pastikan branch `main` di GitHub berisi `vercel.json`, `api/index.php`, serta perubahan konfigurasi database dan sesi.
-2. Pada Vercel, pilih project `sportiva-reservasi` yang terhubung ke repository ini. Root Directory harus direktori root (`./`); pilih preset **Other**, bukan Container/Docker.
-3. Pada **Project Settings → Environment Variables**, tambahkan untuk Production:
-   - `APP_ENV=production`
-   - `SPORTIVA_ADMIN_EMAIL`: alamat email admin demo yang valid.
+1. Push branch `main` ke GitHub, lalu di Render pilih **New + → Web Service** dan hubungkan repository `wijdanananda14-svg/Rpl-`.
+2. Pilih **Docker** sebagai runtime dan direktori root (`.`) sebagai Dockerfile path/root directory.
+3. Pada pengaturan service, atur health check path ke `/` (jika opsi tersedia).
+4. Tambahkan environment variables:
+   - `SPORTIVA_ADMIN_EMAIL`: email admin valid.
    - `SPORTIVA_ADMIN_PASSWORD`: password unik minimal 12 karakter.
-4. Redeploy branch `main`, lalu buka domain `*.vercel.app` yang diberikan. Halaman admin ada di `/index.php?page=admin`.
-5. Pastikan homepage dan CSS tampil. Untuk uji database/login, ingat filesystem Vercel bersifat sementara: SQLite dan sesi disimpan di `/tmp`, tidak dibagi antar-instance, dan dapat hilang kapan saja. Ini hanya demo; jangan pakai data penting atau pribadi.
+   - `APP_ENV` sudah diatur `production` oleh Docker image.
+5. Untuk mempertahankan SQLite saat deploy/restart, tambahkan **Persistent Disk** dengan mount path `/var/data`. Database disimpan di `/var/data/sportiva.sqlite`. Tanpa persistent disk, data SQLite dapat hilang saat instance diganti atau di-redeploy; sesi login juga tidak bertahan setelah restart.
+6. Deploy, buka URL `*.onrender.com`, lalu uji homepage, CSS, registrasi, booking, dan login admin.
 
-Jangan masukkan kredensial admin ke source code atau commit Git. Variabel tersebut hanya membuat admin pada database sementara ketika instance baru mulai. Untuk penggunaan stabil, pindahkan database ke layanan PostgreSQL dan sesi ke Redis/shared store.
+Jangan masukkan kredensial ke repository. Render free web service tidak menyediakan persistent disk; SQLite pada filesystem ephemeral hanya cocok untuk demo tanpa data yang perlu dipertahankan. Persistent disk dan batas paket mengikuti kebijakan Render yang berlaku. Pembayaran aplikasi ini hanya simulasi.
 
 ## VPS atau Raspberry Pi / Orange Pi
 
