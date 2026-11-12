@@ -1,19 +1,25 @@
-FROM dunglas/frankenphp:1-php8.4-alpine
+FROM php:8.2-apache
 
-WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libsqlite3-dev libmariadb-dev \
+    && docker-php-ext-install pdo_sqlite pdo_mysql sqlite3 \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN install-php-extensions sqlite3 \
-    && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && echo "session.save_path=/tmp" >> "$PHP_INI_DIR/php.ini" \
-    && mkdir -p /var/data
+WORKDIR /var/www/html
 
-COPY index.php ./index.php
+COPY index.php ./
+COPY .htaccess ./
 COPY app ./app
 COPY public ./public
-COPY Caddyfile /etc/caddy/Caddyfile
 
-ENV PORT=80
+RUN mkdir -p /var/data \
+    && chown -R www-data:www-data /var/data /var/www/html
+
+ENV PORT=10000
 ENV APP_ENV=production
 ENV SPORTIVA_DB_PATH=/var/data/sportiva.sqlite
 
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+CMD sed -i "s/^Listen 80$/Listen ${PORT}/" /etc/apache2/ports.conf \
+    && sed -i "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf \
+    && exec apache2-foreground

@@ -1,8 +1,0 @@
-:{$PORT:80} {
-    root * /app
-
-    @private path /app/* /database/* /docs/* /routes/* /storage/* /tests/* /.git* /.env* /Dockerfile /Caddyfile /dev-router.php
-    respond @private 404
-
-    php_server
-}

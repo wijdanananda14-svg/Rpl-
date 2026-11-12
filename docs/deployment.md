@@ -4,7 +4,7 @@ Aplikasi PHP + SQLite ini dapat di-deploy ke Render menggunakan Docker, atau dip
 
 ## Deploy ke Render dengan Docker
 
-Repository menyediakan `Dockerfile` berbasis FrankenPHP, `Caddyfile`, dan `.dockerignore`. Render membuat URL publik `*.onrender.com`.
+Repository menyediakan `Dockerfile` berbasis image resmi `php:8.2-apache` dan `.dockerignore`. Image mengaktifkan `mod_rewrite`, `pdo_sqlite`, `pdo_mysql`, dan `sqlite3` (aplikasi saat ini menggunakan ekstensi `sqlite3`). Apache mendengarkan pada port `$PORT` yang disediakan Render. Render membuat URL publik `*.onrender.com`.
 
 1. Push branch `main` ke GitHub, lalu di Render pilih **New + → Web Service** dan hubungkan repository `wijdanananda14-svg/Rpl-`.
 2. Pilih **Docker** sebagai runtime dan direktori root (`.`) sebagai Dockerfile path/root directory.
