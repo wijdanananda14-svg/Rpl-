@@ -10,6 +10,12 @@ require_once __DIR__ . '/app/Models/Field.php';
 require_once __DIR__ . '/app/Models/Payment.php';
 require_once __DIR__ . '/app/Models/Schedule.php';
 
+if (getenv('VERCEL') === '1') {
+    $sessionPath = sys_get_temp_dir();
+    if (!is_dir($sessionPath) || !is_writable($sessionPath) || ini_set('session.save_path', $sessionPath) === false) {
+        throw new RuntimeException('Unable to configure the temporary PHP session path.');
+    }
+}
 session_start();
 
 $database = Database::connection();
@@ -20,7 +26,7 @@ $fieldModel = new Field($database);
 $paymentModel = new Payment($database);
 $scheduleModel = new Schedule($database);
 
-$isProduction = getenv('APP_ENV') === 'production';
+$isProduction = getenv('APP_ENV') === 'production' || getenv('VERCEL') === '1';
 $adminEmail = getenv('SPORTIVA_ADMIN_EMAIL') ?: ($isProduction ? '' : 'admin@sportiva.test');
 $adminPassword = getenv('SPORTIVA_ADMIN_PASSWORD') ?: ($isProduction ? '' : 'admin123');
 

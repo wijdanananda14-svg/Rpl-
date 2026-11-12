@@ -5,7 +5,7 @@
 - PHP 8.0+ dengan ekstensi `sqlite3` dan `session` (sudah diuji dengan PHP 8.5).
 - Browser modern.
 
-Panduan deploy publik ke VPS atau Raspberry Pi/Orange Pi tersedia di [docs/deployment.md](docs/deployment.md).
+Panduan deploy ke Vercel, VPS, atau Raspberry Pi/Orange Pi tersedia di [docs/deployment.md](docs/deployment.md).
 Untuk tautan demo publik sementara tanpa VPS, gunakan tunnel hanya dengan database demo terpisah dan router aman `dev-router.php`; komputer harus tetap menyala.
 
 ## Menjalankan aplikasi

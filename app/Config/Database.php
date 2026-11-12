@@ -6,7 +6,10 @@ final class Database
 {
     public static function connection(): SQLite3
     {
-        $storagePath = getenv('SPORTIVA_DB_PATH') ?: dirname(__DIR__, 2) . '/storage/reservasi.sqlite';
+        $defaultStoragePath = getenv('VERCEL') === '1'
+            ? sys_get_temp_dir() . '/sportiva.sqlite'
+            : dirname(__DIR__, 2) . '/storage/reservasi.sqlite';
+        $storagePath = getenv('SPORTIVA_DB_PATH') ?: $defaultStoragePath;
         $database = new SQLite3($storagePath);
         $database->exec('PRAGMA foreign_keys = ON');
         $database->enableExceptions(true);
